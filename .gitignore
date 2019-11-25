@@ -59,4 +59,5 @@ ENV/
 .idea/
 
 visualization/.ipynb_checkpoints
+data/
 

@@ -125,7 +125,7 @@ def initialize_dictionaries(word2vecFile=None, catDicFile=None, wsChildrenFile =
         print('file does not exist:', word2vecFile)
         return
 
-    with open(word2vecFile, 'r') as w2v:
+    with open(word2vecFile, mode="r", encoding="utf-8") as w2v:
         for line in w2v.readlines():
             wlst = line.strip().split()
             word2vecDic[wlst[0]] = vec_norm([float(ele) for ele in wlst[1:]])
@@ -200,7 +200,7 @@ def create_parent_children_file_from_path(ofile="/Users/tdong/data/glove_wordSen
             if ancestor in lst:
                 return lst[-2]
     voc = []
-    with open(w2vFile, 'r') as vfh:
+    with open(w2vFile, 'r', encoding="utf-8") as vfh:
         for ln in vfh:
             voc.append(ln.split()[0])
     parentChildDic = defaultdict(list)
@@ -246,7 +246,7 @@ def clean_parent_children_file(ifile="/Users/tdong/myDocs/glove.6B.tree.input/gl
                               w2vFile= "/Users/tdong/data/glove/glove.6B.50d.txt",
                                ofile="/Users/tdong/data/glove_wordSenseChildren.txt"):
     lines = []
-    with open(w2vFile, 'r') as ifh:
+    with open(w2vFile, 'r', encoding="utf-8") as ifh:
         vocLst = [ele.split()[0] for ele in ifh.readlines()]
     with open(ifile, 'r') as ifh:
         for ln in ifh:

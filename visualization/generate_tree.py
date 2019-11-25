@@ -1,8 +1,18 @@
 from collections import defaultdict
 from nltk.corpus import wordnet as wn
-import shutil, os
 
-def generate_words_paths_file(words, file, glove_words_set =set()):
+input_examples_words_mapping = {
+    'Cities': ['City','Berlin','London','Tokyo','Paris','Singapore','Amsterdam','Seoul'],
+    'Fruits': ['Fruit','Orange','Banana'],
+    'Small': ['church', 'kirk', 'cathedral'],
+    'Medium': ['car','house','toy','fruit','banana'],
+    'Large': ['Akee','Apple','Apricot','Kiwifruit','Kumquat','Lime','Loquat','Pineapple','Tayberry','Plumcot','Lychee','Damson','Cucumber','Cloudberry','Banana','Fig','Jambul','Mango','Orange','Clementine','Papaya','Peach','Salal','Satsuma'],
+    'Large2' : ['City', 'Berlin', 'London', 'Tokyo', 'Paris', 'Singapore', 'Amsterdam', 'Seoul', 'Baku', 'Damascus', 'Djibouti', 'Gustavia', 'Havana', 'Helsinki', 'Nassau'],
+    'Custom' : []
+}
+
+
+def generate_words_paths_file(words, file, glove_words_set=set()):
     output = ["*root* *root* "]
     words_paths = {}
     for word in words:
@@ -26,14 +36,14 @@ def generate_child_file(paths_file, file):
             child_dic[word] = set()
         for ln in input_lines:
             path_tokens = ln.strip().split()[1:]
-            for i,token in enumerate(path_tokens):
-                if i < len(path_tokens)-1:
-                    child_dic[path_tokens[i]].add(path_tokens[i+1])
+            for i, token in enumerate(path_tokens):
+                if i < len(path_tokens) - 1:
+                    child_dic[path_tokens[i]].add(path_tokens[i + 1])
         output = []
-        for key,value in child_dic.items():
+        for key, value in child_dic.items():
             output_line = key + " "
             for value in list(value):
-                output_line+= value + " "
+                output_line += value + " "
             output.append(output_line[:-1])
         write_data_to_file(file, output)
 
@@ -44,7 +54,7 @@ def write_data_to_file(file_path, lines):
             if not '\n' in line:
                 file.write("\n")
 
-def generate_path(synset,glove_words_set=set()):
+def generate_path(synset, glove_words_set=set()):
     word_path = synset.name() + " *root* "
     hypernym_path_synsets = synset.hypernym_paths()[0]
     for hypernym_path_synset in hypernym_path_synsets:
@@ -53,7 +63,7 @@ def generate_path(synset,glove_words_set=set()):
             word_path += hypernym_path_synset.name() + " "
     return word_path
 
-def generare_hypernym_path(synset, words_paths, glove_words_set =set()):
+def generare_hypernym_path(synset, words_paths, glove_words_set=set()):
     if synset is None:
         return
     if "_" in synset.name() and "-" in synset.name():
@@ -68,7 +78,7 @@ def generare_hypernym_path(synset, words_paths, glove_words_set =set()):
         if "_" not in word and "-" not in word and word.split('.')[0] in glove_words_set:
             generare_hypernym_path(hypernym_path_synset, words_paths, glove_words_set)
 
-def generate_ws_cat_codes(cpathFile = "", childrenFile ="",  outFile="", depth=0):
+def generate_ws_cat_codes(cpathFile="", childrenFile="", outFile="", depth=0):
     wsPathDic, wsChildrenDic = defaultdict(), defaultdict()
     with open(cpathFile, 'r') as cfh:
         for ln in cfh.readlines():
@@ -83,7 +93,7 @@ def generate_ws_cat_codes(cpathFile = "", childrenFile ="",  outFile="", depth=0
                 wsChildrenDic[lst[0]] = []
             else:
                 wsChildrenDic[lst[0]] = lst[1:]
-    ofh = open(outFile, 'a+')
+    ofh = open(outFile, 'w')
     ml, nm = 0, ''
     for node, plst in wsPathDic.items():
         plst = plst[:-1]
@@ -95,67 +105,47 @@ def generate_ws_cat_codes(cpathFile = "", childrenFile ="",  outFile="", depth=0
             if parent in wsChildrenDic:
                 children = wsChildrenDic[parent]
             if child in children:
-                clst.append(str(children.index(child) +1))
+                clst.append(str(children.index(child) + 1))
         clst += ['0'] * (depth - len(clst))
         line = " ".join([node] + clst) + "\n"
         ofh.write(line)
     ofh.close()
     return nm, ml
 
-if __name__ == "__main__":
-    words_paths = '../data_in/small.wordSensePath.txt'
-    generated_child_file = '../data_in/small.children.txt'
-    cat_code = '../data_in/small.catcode.txt'
-    glove = '../data_in/glove.txt'
+def read_word2vec_file(glove_file_path):
+    glove_words_set = set()
+    with open(glove_file_path, mode="r", encoding="utf-8") as file:
+        for line in file:
+            glove_words_set.add(line[:-1].split()[0])
+    return glove_words_set
 
-    #test1 = ['City','Berlin','London','Tokyo','Paris','Singapore','Amsterdam','Seoul','Baku','Damascus','Djibouti','Gustavia','Havana','Helsinki','Nassau']
-    test1 = ['City','Berlin','London','Tokyo','Paris','Singapore','Amsterdam','Seoul']
-    test2 = ['Fruit','Orange','Banana']
-    test3 = ['church', 'kirk', 'cathedral']
-    test4 = ['car','house','toy','fruit','banana']
-    test5 = ['Akee',
-             'Apple',
-             'Apricot',
-             'Kiwifruit',
-             'Kumquat',
-             'Lime',
-             'Loquat',
-             'Pineapple',
-             'Tayberry',
-             'Plumcot',
-             'Lychee',
-             'Damson',
-             'Cucumber',
-             'Cloudberry',
-             'Banana',
-             'Fig',
-             'Jambul',
-             'Mango',
-             'Orange',
-             'Clementine',
-             'Papaya',
-             'Peach',
-             'Salal',
-             'Satsuma']
+def read_input_words(input_file_path):
+    words = []
+    with open(input_file_path, mode="r", encoding="utf-8") as file:
+        for line in file:
+            words.extend([x.strip() for x in str(line).split(',')])
+    return words
 
-    write_data_to_file(cat_code, [])
-
-
-    if os.path.exists('../data_out'):
-        shutil.rmtree('../data_out')
+def generate_files(word2vec_file_path=None, input_file_path=None , sample=None, output_path=None):
+    glove_words = read_word2vec_file(word2vec_file_path)
+    words = None
+    if sample is None:
+        words = read_input_words(input_file_path)
     else:
-        os.mkdir('../data_out')
+        words = input_examples_words_mapping[sample]
 
+    words_paths = output_path + '/small.wordSensePath.txt'
+    generated_child_file = output_path + '/small.children.txt'
+    cat_code = output_path + '/small.catcode.txt'
 
-    def read_glove_file(glove_file_path):
-        glove_words_set = set()
-        with open(glove_file_path, mode="r", encoding="utf-8") as file:
-            for line in file:
-                glove_words_set.add(line[:-1].split()[0])
-        return glove_words_set
-
-
-    glove_words = read_glove_file(glove)
-    generate_words_paths_file(test5, words_paths,glove_words)
-    generate_child_file(words_paths,generated_child_file)
+    generate_words_paths_file(words, words_paths, glove_words)
+    generate_child_file(words_paths, generated_child_file)
     generate_ws_cat_codes(words_paths, generated_child_file, cat_code, depth=15)
+
+
+
+
+
+
+
+

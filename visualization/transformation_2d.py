@@ -6,9 +6,6 @@ from sklearn.decomposition import PCA
 from visualization.ploting import plot_dic
 import json
 
-INPUT2 = '../data_out/nball.txt'
-wsChildrenFile = '../data_in/small.children.txt'
-
 def reduce_dimensions(word2BallDic):
     vectors = []
     words = []
@@ -186,29 +183,25 @@ def check_all_tree(word2CircleDic, wsChildrenDic, name="Tree"):
     print("------------------------------------------------------------")
 
 
-word2CircleDic = {}
-wsChildrenDic = {}
-word2BallDic = {}
+def do_all(balls_file_path, children_file_path):
 
-read_balls_file(INPUT2, word2BallDic)
-read_chilren_file(wsChildrenFile, wsChildrenDic)
-word2CircleDic = reduce_dimensions(word2BallDic)
+    wsChildrenDic = {}
+    word2BallDic = {}
 
-words_to_vis = ['amsterdam.n.01', 'seoul.n.01', 'tokyo.n.01', 'singapore.n.01', 'berlin.n.01', 'london.n.01', 'paris.n.01', 'capital.n.03', 'seat.n.05']
-words_to_vis = "pineapple.n.02 banana.n.02 banana.n.02 litchi.n.02 apricot.n.02 fig.n.04 loquat.n.02"
-words_to_vis = words_to_vis.split(" ")
+    read_balls_file(balls_file_path, word2BallDic)
+    read_chilren_file(children_file_path, wsChildrenDic)
+    word2CircleDic = reduce_dimensions(word2BallDic)
 
-check_all_tree(word2BallDic, wsChildrenDic, "Balls")
-check_all_tree(word2CircleDic, wsChildrenDic, "2D circles before fixing")
+    check_all_tree(word2BallDic, wsChildrenDic, "Balls")
 
-plot_dic(word2CircleDic, 'Before', words_to_vis)
+    check_all_tree(word2CircleDic, wsChildrenDic, "2D circles before fixing")
 
-fix("*root*", word2CircleDic, wsChildrenDic, word2BallDic)
+    plot_dic(word2CircleDic, 'Before', word2CircleDic)
 
-ploting = {k: word2CircleDic[k] for k in (words_to_vis) if k in word2CircleDic}
+    fix("*root*", word2CircleDic, wsChildrenDic, word2BallDic)
 
-check_all_tree(word2CircleDic, wsChildrenDic, "2D circles after fixing")
+    check_all_tree(word2CircleDic, wsChildrenDic, "2D circles after fixing")
 
-plot_dic(word2CircleDic, 'After', words_to_vis)
+    plot_dic(word2CircleDic, 'After', word2CircleDic)
 
-plt.show()
+    plt.show()

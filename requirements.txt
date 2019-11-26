@@ -1,3 +1,4 @@
+scikit-learn
 cycler==0.10.0
 gdbn==0.1
 gnumpy==0.2

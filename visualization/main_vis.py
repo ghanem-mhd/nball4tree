@@ -1,7 +1,7 @@
 import os
 import argparse
-from visualization.generate_tree import generate_files
-from visualization.transformation_2d import do_all
+from generate_tree import generate_files
+from transformation_2d import reduce_and_fix, visualize
 
 
 def main():
@@ -15,6 +15,8 @@ def main():
     parser.add_argument('-v', '--vis',  action='store_true')
     parser.add_argument('--balls')
     parser.add_argument('--children')
+    parser.add_argument('-rf', '--reduceAndFix', action='store_true')
+    parser.add_argument('--circles')
 
     args = parser.parse_args()
     if args.gen:
@@ -23,9 +25,12 @@ def main():
             generate_files(args.w2v, args.input, args.sample, args.output)
             print("Finish generating files...")
 
-    if args.vis:
-        if args.balls and args.children:
-            do_all(args.balls, args.children)
+    if args.reduceAndFix:
+        if args.balls and args.children and args.output:
+            reduce_and_fix(args.balls, args.children, args.output)
+
+    if args.vis and args.circles:
+        visualize(args.circles)
 
 
 if __name__ == "__main__":

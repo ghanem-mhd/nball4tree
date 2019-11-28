@@ -202,17 +202,20 @@ def reduce_and_fix(balls_file_path, children_file_path, output):
     check_all_tree(balls_dic, children_dic, "N-Balls")
     circles_dic = reduce_dimensions(balls_dic)
     check_all_tree(circles_dic, children_dic, "2D circles before fixing")
-    save_data(output + "before", circles_dic)
+    save_data(output + "_before", circles_dic)
     fix("*root*", circles_dic, children_dic, balls_dic)
     check_all_tree(circles_dic, children_dic, "2D circles after fixing")
-    save_data(output + "after", circles_dic)
+    save_data(output + "_after", circles_dic)
 
 
 def visualize(circles_file_path):
-    circles_dic = {}
-    read_balls_file(circles_file_path, circles_dic)
-    words = "seoul.n.01 berlin.n.01".split(" ")
-    plot_dic(circles_dic, 'Circles', words)
+    words = [] # "seoul.n.01 berlin.n.01 london.n.01 singapore.n.01 amsterdam.n.01 tokyo.n.01 paris.n.01".split(" ")
+    circles_dic_before = {}
+    read_balls_file(circles_file_path+"_before", circles_dic_before)
+    plot_dic(circles_dic_before, 'Circles before fixing', words)
+    circles_dic_after = {}
+    read_balls_file(circles_file_path+"_after", circles_dic_after)
+    plot_dic(circles_dic_after, 'Circles after fixing', words)
     plt.show()
 
 

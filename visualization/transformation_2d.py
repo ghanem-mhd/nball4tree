@@ -93,7 +93,7 @@ def disjoint_degree(circle1, circle2):
 
 def is_circles_disjoint(circle1, circle2):
     degree = disjoint_degree(circle1, circle2)
-    if degree < 0:
+    if degree <= 0:
         return False
     return True
 
@@ -152,8 +152,8 @@ def fix(word, circles_dic, children_dic, balls_dic):
     if word == "*root*":
         return
     for child in children:
-        contained = is_circle2_contains_circle1(circles_dic[child], circles_dic[word])
-        if not contained:
+        if not is_circle2_contains_circle1(circles_dic[child], circles_dic[word]) and \
+                is_circle2_contains_circle1(balls_dic[child1], balls_dic[word]):
             contain_circles(child, word, circles_dic, children_dic)
 
 
@@ -209,7 +209,7 @@ def reduce_and_fix(balls_file_path, children_file_path, output):
 
 
 def visualize(circles_file_path):
-    words = [] # "seoul.n.01 berlin.n.01 london.n.01 singapore.n.01 amsterdam.n.01 tokyo.n.01 paris.n.01".split(" ")
+    words = "berlin.n.01 amsterdam.n.01 paris.n.01".split(" ")
     circles_dic_before = {}
     read_balls_file(circles_file_path+"_before", circles_dic_before)
     plot_dic(circles_dic_before, 'Circles before fixing', words)
@@ -225,3 +225,8 @@ def check_embeddings(balls_file_path, children_file_path):
     read_balls_file(balls_file_path, balls_dic)
     read_children_file(children_file_path, children_dic)
     check_all_tree(balls_dic, children_dic, "")
+
+
+balls_dic = {}
+read_balls_file('../data/nballs.txt', balls_dic)
+print(is_circles_disjoint(balls_dic['amsterdam.n.01'], balls_dic['berlin.n.01']))

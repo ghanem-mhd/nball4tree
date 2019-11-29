@@ -225,8 +225,3 @@ def check_embeddings(balls_file_path, children_file_path):
     read_balls_file(balls_file_path, balls_dic)
     read_children_file(children_file_path, children_dic)
     check_all_tree(balls_dic, children_dic, "")
-
-
-balls_dic = {}
-read_balls_file('../data/nballs.txt', balls_dic)
-print(is_circles_disjoint(balls_dic['amsterdam.n.01'], balls_dic['berlin.n.01']))

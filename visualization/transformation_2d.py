@@ -188,24 +188,27 @@ def check_all_tree(circles_dic, children_dic, name="Tree"):
     disjoint_failed = {k: v for k, v in disjoint_failed.items() if len(v) > 0}
     contained_failed = {k: v for k, v in contained_failed.items() if len(v) > 0}
     print("Checking {}".format(name))
-    print("Disjoint Condition Failed", json.dumps(disjoint_failed, indent=4, sort_keys=True))
-    print("Contained Condition Failed", json.dumps(contained_failed, indent=4, sort_keys=True))
-    print("------------------------------------------------------------")
+    print("Disjoint Condition Failed Cases", json.dumps(disjoint_failed, indent=4, sort_keys=True))
+    print("Contained Condition Failed Cases", json.dumps(contained_failed, indent=4, sort_keys=True))
+    print("")
 
 
 def reduce_and_fix(balls_file_path, children_file_path, output):
+    output_file_path, output_file_ext = os.path.splitext(output)
+    output_file_before = output_file_path + "_before" + output_file_ext
+    output_file_after = output_file_path + "_after" + output_file_ext
     children_dic = {}
     balls_dic = {}
     read_balls_file(balls_file_path, balls_dic)
     read_children_file(children_file_path, children_dic)
-
-    check_all_tree(balls_dic, children_dic, "N-Balls")
     circles_dic = reduce_dimensions(balls_dic)
+    print("\nBalls reduced to circles successfully\n")
+    check_all_tree(balls_dic, children_dic, "N-Balls")
     check_all_tree(circles_dic, children_dic, "2D circles before fixing")
-    save_data(output + "_before", circles_dic)
+    save_data(output_file_before, circles_dic)
     fix("*root*", circles_dic, children_dic, balls_dic)
     check_all_tree(circles_dic, children_dic, "2D circles after fixing")
-    save_data(output + "_after", circles_dic)
+    save_data(output_file_after, circles_dic)
 
 
 def visualize(circles_file_path):

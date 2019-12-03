@@ -28,7 +28,7 @@ def main():
         if args.balls and args.children and args.output:
             reduce_and_fix(args.balls, args.children, args.output)
 
-    if args.vis and args.circles and args.showenWords:
+    if args.vis and args.circles:
         visualize(args.circles, args.showenWords)
 
 

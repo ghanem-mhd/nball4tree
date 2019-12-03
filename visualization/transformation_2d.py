@@ -46,7 +46,7 @@ def magic_scaling(word, circles_dic, children_dic, root, scale_factor):
         delta = scale_factor * (word_center[0] - root_center[0]), scale_factor * (word_center[1] - root_center[1])
         new_center = root_center[0] + delta[0], root_center[1] + delta[1]
         new_vector, new_length = get_vector_and_length(new_center)
-        circles_dic[word][-2] = new_vector
+        circles_dic[word][: -2] = new_vector
         circles_dic[word][-2] = new_length
     if len(children) == 0:
         return

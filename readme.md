@@ -1,4 +1,4 @@
-# Visualization:
+# NBalls Visualization:
 [Wiki](https://github.com/ghanem-mhd/nball4tree/wiki)
 
 # Install the package

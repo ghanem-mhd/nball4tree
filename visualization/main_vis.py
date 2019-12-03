@@ -1,8 +1,6 @@
-import os
 import argparse
 from generate_tree import generate_files
 from transformation_2d import reduce_and_fix, visualize
-
 
 def main():
     parser = argparse.ArgumentParser()
@@ -17,6 +15,7 @@ def main():
     parser.add_argument('--children')
     parser.add_argument('-rf', '--reduceAndFix', action='store_true')
     parser.add_argument('--circles')
+    parser.add_argument('--showenWords')
 
     args = parser.parse_args()
     if args.gen:
@@ -29,8 +28,8 @@ def main():
         if args.balls and args.children and args.output:
             reduce_and_fix(args.balls, args.children, args.output)
 
-    if args.vis and args.circles:
-        visualize(args.circles)
+    if args.vis and args.circles and args.showenWords:
+        visualize(args.circles, args.showenWords)
 
 
 if __name__ == "__main__":

@@ -7,6 +7,8 @@ from ploting import plot_dic
 import json
 import os
 
+ALPHA = 0.000000000001
+
 
 def reduce_dimensions(balls_dic):
     vectors = []
@@ -52,12 +54,23 @@ def magic_scaling(word, circles_dic, children_dic, root, scale_factor):
         magic_scaling(child, circles_dic, children_dic, root, scale_factor)
 
 
-def disjoint_circles_by_scaling_down(word1, word2, circles_dic, children_dic):
+def check_siblings(word1, word2, circles_dic, children_dic, parent, scale_factor):
+    siblings_for_word1_and_word2 = children_dic[parent]
+    for sibling in siblings_for_word1_and_word2:
+        if sibling != word1 and sibling != word2:
+            disjoint_with_word1 = disjoint_degree(circles_dic[word1], circles_dic[sibling])
+            disjoint_with_word2 = disjoint_degree(circles_dic[word2], circles_dic[sibling])
+            if disjoint_with_word1 < ALPHA or disjoint_with_word2 < ALPHA:
+                magic_scaling(sibling, circles_dic, children_dic, sibling, scale_factor)
+
+
+def disjoint_circles_by_scaling_down(word1, word2, circles_dic, children_dic, parent):
     old_radius1 = circles_dic[word1][-1]
     old_radius2 = circles_dic[word2][-1]
     dis = dis_between_circles_centers(circles_dic[word1], circles_dic[word2])
     dis = (dis - (dis * 0.01))
     scale_factor = dis / (old_radius1 + old_radius2)
+    check_siblings(word1, word2, circles_dic, children_dic, parent, scale_factor)
     magic_scaling(word1, circles_dic, children_dic, word1, scale_factor)
     magic_scaling(word2, circles_dic, children_dic, word2, scale_factor)
 
@@ -93,7 +106,7 @@ def disjoint_degree(circle1, circle2):
 
 def is_circles_disjoint(circle1, circle2):
     degree = disjoint_degree(circle1, circle2)
-    if degree <= 0:
+    if degree < 0:
         return False
     return True
 
@@ -148,7 +161,7 @@ def fix(word, circles_dic, children_dic, balls_dic):
         for child1, child2 in itertools.combinations(children, 2):
             if not is_circles_disjoint(circles_dic[child1], circles_dic[child2]) and \
                     is_circles_disjoint(balls_dic[child1], balls_dic[child2]):
-                disjoint_circles_by_scaling_down(child1, child2, circles_dic, children_dic)
+                disjoint_circles_by_scaling_down(child1, child2, circles_dic, children_dic, word)
     if word == "*root*":
         return
     for child in children:
@@ -210,15 +223,27 @@ def reduce_and_fix(balls_file_path, children_file_path, output):
     check_all_tree(circles_dic, children_dic, "2D circles after fixing")
     save_data(output_file_after, circles_dic)
 
+def read_words_to_show_file(file_path):
+    words_to_show = []
+    if file_path is None or file_path == "":
+        return words_to_show
+    with open(file_path, mode="r", encoding="utf-8") as filw:
+        for line in filw.readlines():
+            words_to_show.extend(line.strip().split(" "))
+    return words_to_show
 
-def visualize(circles_file_path):
-    words = "berlin.n.01 amsterdam.n.01 paris.n.01".split(" ")
+
+def visualize(circles_file_path, words_to_show_file_path):
+    output_file_path, output_file_ext = os.path.splitext(circles_file_path)
+    output_file_before = output_file_path + "_before" + output_file_ext
+    output_file_after = output_file_path + "_after" + output_file_ext
     circles_dic_before = {}
-    read_balls_file(circles_file_path+"_before", circles_dic_before)
-    plot_dic(circles_dic_before, 'Circles before fixing', words)
+    words_to_show = read_words_to_show_file(words_to_show_file_path)
+    read_balls_file(output_file_before, circles_dic_before)
+    plot_dic(circles_dic_before, 'Circles before fixing', words_to_show)
     circles_dic_after = {}
-    read_balls_file(circles_file_path+"_after", circles_dic_after)
-    plot_dic(circles_dic_after, 'Circles after fixing', words)
+    read_balls_file(output_file_after, circles_dic_after)
+    plot_dic(circles_dic_after, 'Circles after fixing', words_to_show)
     plt.show()
 
 

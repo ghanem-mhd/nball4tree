@@ -30,8 +30,8 @@ def plot(vectors, radius, words, fig, ax):
     ax.set_aspect(1)
 
     for i, word in enumerate(words):
-        #point = random_point(vectors[i], radius[i])
-        ax.text(vectors[i][0] + radius[i], vectors[i][1], '%s' % (str(word)), size=10, zorder=1, color=colors[i])
+        point = random_point(vectors[i], radius[i])
+        ax.text(point[0], point[1], '%s' % (str(word)), size=10, zorder=1, color=colors[i])
     fig.show()
 
 

@@ -1,3 +1,6 @@
+# Visualization:
+[Wiki](https://github.com/ghanem-mhd/nball4tree/wiki)
+
 # Install the package
 
 * for Ubuntu platform please first install python3-tk
@@ -15,10 +18,6 @@ $ source venv/bin/activate
 $ pip install -r requirements.txt
 
 ```
-
-# Visualization:
-[Wiki](https://github.com/ghanem-mhd/nball4tree/wiki)
-
 
 # Experiment 1:  Training and evaluating nball embeddings
 ## Experiment 1.1: Training nball embeddings

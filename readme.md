@@ -16,6 +16,10 @@ $ pip install -r requirements.txt
 
 ```
 
+# Visualization:
+[Wiki](https://github.com/ghanem-mhd/nball4tree/wiki)
+
+
 # Experiment 1:  Training and evaluating nball embeddings
 ## Experiment 1.1: Training nball embeddings
 * [datasets for training nball embeddings](https://drive.google.com/file/d/1V2kBNgxDzFBznkd97UuwDW0OtionpP6y/view?usp=sharing)
